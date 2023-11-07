@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>Arbol</title>
+    <style>
+        body { margin: 0; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.126.1/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <script type="module">
+
+
+        // Tu código JavaScript para Three.js aquí
+        var scene = new THREE.Scene();
+
+        // Camera
+        var aspect = window.innerWidth / window.innerHeight;
+        var camera = new THREE.PerspectiveCamera(80, aspect, 0.1, 1000);
+        camera.position.z = 5;
+        camera.position.x = 5;
+        camera.position.y = 5;
+        camera.lookAt(0, 1.5, 0);
+        camera.updateProjectionMatrix();
+
+        // Renderer
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Model:
+        var material = new THREE.MeshStandardMaterial();
+
+        var geometry = new THREE.BoxGeometry(2, 1, 2);
+        var base = new THREE.Mesh(geometry, material);
+        scene.add(base);
+
+        var shoulder = new THREE.Object3D();
+        shoulder.translateY(0.5);
+        base.add(shoulder);
+
+        geometry = new THREE.BoxGeometry(0.5, 2, 0.5);
+        var lowerArm = new THREE.Mesh(geometry, material);
+        lowerArm.translateY(1);
+        shoulder.add(lowerArm);
+
+        var elbow = new THREE.Object3D();
+        elbow.translateY(1);
+        lowerArm.add(elbow);
+
+        geometry = new THREE.BoxGeometry(0.5, 2, 0.5);
+        var Arm = new THREE.Mesh(geometry, material);
+        Arm.translateY(1);
+        elbow.add(Arm);
+
+        // Light
+        var light = new THREE.DirectionalLight(0xffffff, 1.0);
+        light.position.set(10, 5, 10);
+        light.target = base;
+        scene.add(light);
+
+        light = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(light);
+
+        // Options (DAT.GUI)
+        var options = {
+            base: 0,
+            shoulder: 0,
+        };
+
+// Rendering
+var zAxis = new THREE.Vector3(0, 0, 1);
+var yAxis = new THREE.Vector3(0, 1, 0);
+
+var GAMMA1=180
+var X1= 45
+
+
+var render = function () {
+  requestAnimationFrame( render );
+  
+  GAMMA1=GAMMA1+1
+  if (GAMMA1>90){
+    GAMMA1=GAMMA1-90
+  }	
+  
+  // Rotate joints
+  base.setRotationFromAxisAngle(yAxis, X1 * Math.PI / 180)
+  shoulder.setRotationFromAxisAngle(zAxis, GAMMA1 * Math.PI / 180)
+  elbow.setRotationFromAxisAngle(zAxis, GAMMA1 * Math.PI / 180);
+
+  // Render
+  renderer.render( scene, camera );
+};
+
+render();
+    </script>
+</body>
+</html>
